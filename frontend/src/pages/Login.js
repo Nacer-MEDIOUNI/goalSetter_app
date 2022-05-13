@@ -1,5 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { login, reset } from "../features/auth/authSlice";
+import Spinner from "../components/Spinner";
 import { FaSignInAlt } from "react-icons/fa";
+
 function Login() {
   const [formData, setFormData] = useState({
     name: "",
@@ -10,9 +16,24 @@ function Login() {
 
   const { email, password } = formData;
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-  };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess || user) {
+      navigate("/");
+    }
+
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -20,6 +41,24 @@ function Login() {
       [e.target.name]: e.target.value,
     }));
   };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    if (!password) {
+      toast.error("Passwords not correct");
+    } else {
+      const userData = {
+        email,
+        password,
+      };
+      dispatch(login(userData));
+    }
+  };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <>
@@ -46,7 +85,7 @@ function Login() {
           </div>{" "}
           <div className="form-group">
             <input
-              type="text"
+              type="password"
               className="form-control"
               id="password"
               name="password"
@@ -54,7 +93,7 @@ function Login() {
               placeholder="Enter your password"
               onChange={onChange}
             />
-          </div>{" "}
+          </div>
           <div className="from-group">
             <button type="submit" className="btn btn-block">
               Submit

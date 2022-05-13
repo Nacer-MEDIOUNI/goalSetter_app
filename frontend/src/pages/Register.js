@@ -1,18 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { FaUser } from "react-icons/fa";
+import { register, reset } from "../features/auth/authSlice";
+import Spinner from "../components/Spinner";
+
 function Register() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    passwordCofirm: "",
+    passwordConfirm: "",
   });
 
   const { name, email, password, passwordConfirm } = formData;
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-  };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess || user) {
+      navigate("/");
+    }
+
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -20,6 +41,25 @@ function Register() {
       [e.target.name]: e.target.value,
     }));
   };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    if (password !== passwordConfirm) {
+      toast.error("Paswords do not mastch");
+    } else {
+      const userData = {
+        name,
+        email,
+        password,
+      };
+      dispatch(register(userData));
+    }
+  };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <>
@@ -29,6 +69,7 @@ function Register() {
         </h1>
         <p style={{ margin: "15px" }}>Hi there, please create your account!</p>
       </section>
+
       <section className="form">
         <form onSubmit={onSubmit}>
           <div className="form-group">
@@ -41,10 +82,10 @@ function Register() {
               placeholder="Enter your name"
               onChange={onChange}
             />
-          </div>{" "}
+          </div>
           <div className="form-group">
             <input
-              type="text"
+              type="email"
               className="form-control"
               id="email"
               name="email"
@@ -52,30 +93,30 @@ function Register() {
               placeholder="Enter your email"
               onChange={onChange}
             />
-          </div>{" "}
+          </div>
           <div className="form-group">
             <input
-              type="text"
+              type="password"
               className="form-control"
               id="password"
               name="password"
               value={password}
-              placeholder="Enter your password"
+              placeholder="Enter password"
               onChange={onChange}
             />
-          </div>{" "}
+          </div>
           <div className="form-group">
             <input
-              type="text"
+              type="password"
               className="form-control"
               id="passwordConfirm"
               name="passwordConfirm"
               value={passwordConfirm}
-              placeholder="Please confirm your password"
+              placeholder="Confirm password"
               onChange={onChange}
             />
           </div>
-          <div className="from-group">
+          <div className="form-group">
             <button type="submit" className="btn btn-block">
               Submit
             </button>

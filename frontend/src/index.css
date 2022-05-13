@@ -135,7 +135,8 @@ h3 {
   margin: 0 0 5px 3px;
 }
 
-.btn {
+.btn,
+#btn-logout {
   padding: 10px 20px;
   border: 1px solid #000;
   border-radius: 5px;
@@ -166,8 +167,11 @@ h3 {
 }
 
 .btn:hover {
-  transform: scale(0.98);
   color: rgb(0, 255, 149);
+}
+
+#btn-logout:hover {
+  color: rgb(255, 0, 0);
 }
 
 .loadingSpinnerContainer {
