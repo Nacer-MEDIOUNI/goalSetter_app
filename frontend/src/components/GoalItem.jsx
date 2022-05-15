@@ -11,7 +11,6 @@ const GoalItem = ({ goal }) => {
       </div>
       <div
         style={{
-          paddingLeft: "60%",
           paddingTop: "20px",
           fontSize: "12px",
           fontWeight: "lighter",
