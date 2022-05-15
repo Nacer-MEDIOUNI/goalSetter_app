@@ -44,7 +44,7 @@ function Dashboard() {
 
       <section className="content">
         {goals.length > 0 ? (
-          <div className="goal">
+          <div >
             {goals.map((goal) => (
               <GoalItem key={goal._id} goal={goal} />
             ))}
